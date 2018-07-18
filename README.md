@@ -1,5 +1,4 @@
 # XiP
-=====
 
 Xoshiro in Python (XiP) is a library for fast generation of pseudorandom numbers in python.
 It uses a C++ implementation of two xoshiro generators.
