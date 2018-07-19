@@ -96,6 +96,16 @@ extern "C"{
     return vector_to_py(reshaper::uniform(streams.at(streamID), n, lb, ub), &PyFloat_FromDouble);
   }
 
+  PyObject* uniform_vector(size_t streamID, size_t n, PyObject* lb, PyObject* ub){
+    vector<double> lbs = py_to_vector<double>(lb, &PyFloat_AsDouble);
+    vector<double> ubs = py_to_vector<double>(ub, &PyFloat_AsDouble);
+    vector<vector<double>> v = reshaper::uniform_vector(streams.at(streamID), n, lbs, ubs);
+    vector<PyObject*> u(v.size());
+    for (size_t i = 0; i < v.size(); ++i)
+      u[i] = vector_to_py(v[i], &PyFloat_FromDouble);
+    return vector_to_py(u, [](PyObject* p){return p;});
+  }
+
   PyObject* triangular(size_t streamID, size_t n, double low, double high, double mode){
     return vector_to_py(reshaper::triangular(streams.at(streamID), n, low, high, mode), &PyFloat_FromDouble);
   }

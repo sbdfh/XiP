@@ -61,6 +61,8 @@ class XiP:
     _binding.get_rand_bits.restype = c_ulonglong
     _binding.uniform.argtypes = [c_uint, c_uint, c_double, c_double]
     _binding.uniform.restype = py_object
+    _binding.uniform_vector.argtypes = [c_uint, c_uint, py_object, py_object]
+    _binding.uniform_vector.restype = py_object
     _binding.triangular.argtypes = [c_uint, c_uint, c_double, c_double, c_double]
     _binding.triangular.restype = py_object
     _binding.gammavariate.argtypes = [c_uint, c_uint, c_double, c_double]
@@ -124,7 +126,13 @@ class XiP:
     def uniform(self, a, b, n=1):
         if n <= 0:
             raise ValueError('uniform: can only generate a positive number of samples')
-        return self.random(n, a, b)
+        try:
+            d = len(a)
+        except:
+            return self.random(n, a, b)
+        if len(b) != d:
+            raise ValueError('uniform: lower and upper bound dimensions don\'t match')
+        return XiP._binding.uniform_vector(self._streamID, n, a, b)
 
     def triangular (self, low = 0, high = 1, mode = None, n=1):
         if n <= 0:

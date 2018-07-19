@@ -59,9 +59,18 @@ namespace reshaper {
   template<typename RandomNumberEngine>
   std::vector<double> uniform(RandomNumberEngine* e, size_t n, double low, double high){
     std::vector<double> ret(n);
-    for (auto it = ret.begin(); it != ret.end(); ++it){
+    for (auto it = ret.begin(); it != ret.end(); ++it)
       *it = low + (high-low)*uniform(e);
-    }
+    return ret;
+  }
+
+  template<typename RandomNumberEngine>
+  std::vector<std::vector<double>> uniform_vector(RandomNumberEngine* e, size_t n, std::vector<double> low, std::vector<double> high){
+    size_t d = low.size();
+    std::vector<std::vector<double>> ret(n, std::vector<double>(d));
+    for (auto it = ret.begin(); it != ret.end(); ++it)
+      for (size_t i = 0; i < d; ++i)
+        (*it)[i] = low[i] + (high[i] - low[i])*uniform(e);
     return ret;
   }
 
