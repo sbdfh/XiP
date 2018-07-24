@@ -30,9 +30,11 @@ from math import pi
 # Each object gets an ID on creation and uses that ID to talk to the binding.
 #
 # By default, XiP uses a xoshiro256** generator, which is the best all-purpose choice.
-# XiP also offers a xoshiro256+ generator.
-# However, this should only be used for generation of floating point numbers.
-# Always use the default generator for bit strings and integers.
+# XiP also offers a xoshiro+ generator and generators with state size 128 and 512.
+# xoshiro+ should only be used for generation of floating point numbers.
+# Use 128-bit generator if you are really starved for space.
+# A 512-bit generator can be used for massive (beyond most use cases) parallel access to the same stream.
+# Most users should be perfectly fine with the default generator.
 #
 # This class provides an extended interface of python's random module.
 # This means it easily be substituted into python projects using stock randomness.
@@ -42,14 +44,14 @@ from math import pi
 #
 # \version 1.0
 #
-# \date 2018/07/12
+# \date 2018/07/24
 ##
 class XiP:
     _streamCount = 0
     _binding = CDLL(path.dirname(path.abspath(__file__))+'/libxip.so')
 
-    x256ss = 0
-    x256p = 1
+    xss = 0
+    xp = 1
 
     ## \cond
     # We need doxygen to ignore this part, otherwise it thinks argtypes and restype are members of XiP.
@@ -88,17 +90,20 @@ class XiP:
     ## \endcond
 
     ##
-    # \param generator XiP.x256ss or XiP.x256p for xoshiro256** and xoshiro256+, respectively.
+    # \param generator XiP.xss or XiP.xp for xoshiro** and xoshiro+, respectively.
+    # \param state State size of the generator. 128, 256, or 512.
     ##
-    def __init__(self, seed = None, generator = 0):
+    def __init__(self, seed = None, generator = XiP.xss, state = 256):
         if not (generator in range(2)):
             raise ValueError('XiP: unknown generator mode')
+        if not (state in [128, 256, 512]):
+            raise ValueError('XiP: invalid state size')
         self._streamID = XiP._streamCount
         XiP._streamCount += 1
         if not seed:
-            XiP._binding.create_new_stream(struct.unpack('@L',urandom(8))[0], generator)
+            XiP._binding.create_new_stream(struct.unpack('@L',urandom(8))[0], generator, state)
         else:
-            XiP._binding.create_new_stream(hash(seed), generator)
+            XiP._binding.create_new_stream(hash(seed), generator, state)
 
     def getstate(self):
         return XiP._binding.get_state(self._streamID)

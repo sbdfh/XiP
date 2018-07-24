@@ -1,13 +1,15 @@
 # XiP
 
 Xoshiro in Python (XiP) is a library for fast generation of pseudorandom numbers in python.
-It uses a C++ implementation of two xoshiro generators.
+It uses a C++ implementation of xoshiro generators.
 The library mirrors the interface of python's random module.
 This means that projects using python stock randomness can easily be ported to this library.
 
-XiP offers two xoshiro style generators: xoshiro256** and xoshiro256+.
+XiP offers two xoshiro style generators: xoshiro** and xoshiro+.
 By default it uses xoshiro256**, which is the best choice for most applications.
-xoshiro256+ should only be used to generate floating point numbers.
+xoshiro+ should only be used to generate floating point numbers.
+There are 128 and 512 bit generators for users who are really starved for space or want additional internal state.
+However, almost all users should be perfectly fine with the default generator.
 See [here](http://xoshiro.di.unimi.it/) for additional information.
 
 ## Advantages

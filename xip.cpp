@@ -4,8 +4,7 @@
  * \brief C++ side of XiP
  */
 #include "splitmix.hpp"
-#include "x256ss.hpp"
-#include "x256p.hpp"
+#include "xoshiro.hpp"
 #include "reshaper.hpp"
 #include "Python.h"
 #include <sstream>
@@ -31,7 +30,7 @@ using namespace std;
  *
  * \version 1.0
  *
- * \date 2018/07/12
+ * \date 2018/07/24
  */
 
 /// Helper function converting std::vector to a python list.
@@ -60,36 +59,31 @@ std::vector<T> py_to_vector(PyObject* list, PyConvFunc conv_f){
 extern "C"{
 
   /// Currently opened streams of pseudorandomness.
-  vector<xoshiro256*> streams;
+  vector<xoshiro> streams;
 
-  /**
-   * \param genmode 0 for xoshiro256**, 1 for xoshiro256+.
+  /*
+   * \param genmode 0 for xoshiro[state_size]**, 1 for xoshiro[state_size]+
+   * \param state_size 128, 256, or 512.
    */
-  void create_new_stream(uint64_t seed, size_t genmode){
+  void create_new_stream(uint64_t seed, size_t genmode, size_t state_size){
     splitmix_seq seedgen({seed});
-    switch (genmode){
-      case 0: streams.push_back(new xoshiro256starstar_engine(seedgen));
-              break;
-      case 1:
-              streams.push_back(new xoshiro256plus_engine(seedgen));
-              break;
-    }
+    streams.push_back(xoshiro(seedgen, genmode, state_size));
   }
 
   PyObject* get_state(size_t streamID){
     stringstream s;
-    s << *streams.at(streamID);
+    s << streams.at(streamID);
     return Py_BuildValue("s", s.str().c_str());
   }
 
   void set_state(size_t streamID, char* state){
     stringstream s;
     s << state;
-    s >> *streams.at(streamID);
+    s >> streams.at(streamID);
   }
 
   uint64_t get_rand_bits(size_t streamID){
-    return (*streams.at(streamID))();
+    return streams.at(streamID)();
   }
 
   PyObject* uniform(size_t streamID, size_t n, double lb, double ub){
