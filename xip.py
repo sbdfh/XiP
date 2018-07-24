@@ -93,7 +93,7 @@ class XiP:
     # \param generator XiP.xss or XiP.xp for xoshiro** and xoshiro+, respectively.
     # \param state State size of the generator. 128, 256, or 512.
     ##
-    def __init__(self, seed = None, generator = XiP.xss, state = 256):
+    def __init__(self, seed = None, generator = 0, state = 256):
         if not (generator in range(2)):
             raise ValueError('XiP: unknown generator mode')
         if not (state in [128, 256, 512]):
