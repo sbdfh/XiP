@@ -27,12 +27,6 @@ class xoshiro256 {
 
 public:
 
-  /// Type of values returned by the generator.
-  /**
-   * \typedef result_type
-   */
-  typedef uint64_t result_type;
-
   /// Gets the smallest possibly generated value.
   /**
    * \return The smallest value in the range of the generator (0L).
