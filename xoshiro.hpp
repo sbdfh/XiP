@@ -127,7 +127,7 @@ public:
   * Creates a xoshiro256 with the same internal state as the right hand side of the assignment.
   * \param e Engine to copy the internal state from.
    */
-  xoshiro256& operator=(const xoshiro256& e){
+  xoshiro& operator=(const xoshiro256& e){
     if (this == &e)
       return *this;
     state = e.state;
