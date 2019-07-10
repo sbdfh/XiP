@@ -34,12 +34,6 @@ class splitmix_seq {
 
 public:
 
-  /// Type of values returned by the generator.
-  /**
-   * \typedef result_type
-   */
-  typedef uint64_t result_type;
-
   /// Default constructor.
   /**
    * Creates a splitmix_seq with an initial sequence of length zero.
@@ -107,7 +101,7 @@ public:
   /**
    * \tparam OutputIterator must meet the standard lib named requirements of an OutputIterator.
    *         std::interator_traits<>::value_type must be an unsigned integer type of width at least 64.
-   * \param dest Start of an iterator with enough space to store size() many values of result_type
+   * \param dest Start of an iterator with enough space to store size() many values of unsigned 64 bit ints.
    * \see https://en.cppreference.com/w/cpp/named_req/OutputIterator
    */
   template<typename OutputIterator>
