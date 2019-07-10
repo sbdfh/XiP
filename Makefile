@@ -1,5 +1,5 @@
 CC = g++
-CFLAGS = -fPIC $$(pkg-config --cflags --libs python3)
+CFLAGS = -fPIC $$(pkg-config --cflags --libs python3) -std=c++17
 RFLAGS = -O3 -DNDEBUG
 DFLAGS = -Wall -Wextra -pedantic -g
 LDFLAGS = -shared

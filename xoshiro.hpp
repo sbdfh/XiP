@@ -21,7 +21,7 @@
  *
  * \version 1.0
  *
- * \date 2018/07/12
+ * \date 2019/07/10
  */
 class xoshiro256 {
 
@@ -96,6 +96,18 @@ public:
   void seed(SeedSequence& sseq){
     state = std::vector<uint64_t>(4);
     sseq.generate(state.begin(), state.end());
+  }
+
+  // Copy assignment operator.
+  /**
+  * Creates a xoshiro256 with the same internal state as the right hand side of the assignment.
+  * \param e Engine to copy the internal state from.
+   */
+  xoshiro256& operator=(const xoshiro256& e){
+    if (this == &e)
+      return *this;
+    state = e.state;
+    return *this;
   }
 
   /**
