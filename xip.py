@@ -44,7 +44,7 @@ from math import pi
 #
 # \version 1.0
 #
-# \date 2018/07/24
+# \date 2019/07/11
 ##
 class XiP:
     _streamCount = 0

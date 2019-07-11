@@ -28,7 +28,7 @@
  *
  * \version 1.0
  *
- * \date 2018/07/12
+ * \date 2019/07/11
  */
 class splitmix_seq {
 

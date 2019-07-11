@@ -37,7 +37,7 @@
  *
  * \version 1.0
  *
- * \date 2018/07/24
+ * \date 2019/07/11
  */
 class xoshiro {
 
@@ -127,7 +127,7 @@ public:
   * Creates a xoshiro256 with the same internal state as the right hand side of the assignment.
   * \param e Engine to copy the internal state from.
    */
-  xoshiro& operator=(const xoshiro256& e){
+  xoshiro& operator=(const xoshiro& e){
     if (this == &e)
       return *this;
     state = e.state;
