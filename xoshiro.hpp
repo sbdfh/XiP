@@ -31,12 +31,6 @@
  *
  * \version 1.0
  *
- * \date 2019/07/10
- *
- * \see http://xoshiro.di.unimi.it/
- *
- * \version 1.0
- *
  * \date 2019/07/11
  */
 class xoshiro {
