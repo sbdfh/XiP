@@ -29,7 +29,7 @@
  *
  * \version 1.0
  *
- * \date 2018/07/12
+ * \date 2019/07/11
  *
  * \}
  */
@@ -42,9 +42,9 @@ namespace reshaper {
    * \return A floating point number chosen uniformly from [0,1)
    */
   template<typename RandomNumberEngine>
-  double uniform(RandomNumberEngine* e){
+  double uniform(RandomNumberEngine& e){
     union{uint64_t i; double d;} u;
-    u.i = 0x3FFULL << 52 | (*e)() >> 12;
+    u.i = 0x3FFULL << 52 | e() >> 12;
     return u.d - 1.0;
   }
 
@@ -57,7 +57,7 @@ namespace reshaper {
    * \return Uniform floating point numbers from the interval [\p low, \p high).
    */
   template<typename RandomNumberEngine>
-  std::vector<double> uniform(RandomNumberEngine* e, size_t n, double low, double high){
+  std::vector<double> uniform(RandomNumberEngine& e, size_t n, double low, double high){
     std::vector<double> ret(n);
     for (auto it = ret.begin(); it != ret.end(); ++it){
       *it = low + (high-low)*uniform(e);
@@ -76,7 +76,7 @@ namespace reshaper {
    * \see https://en.wikipedia.org/wiki/Triangular_distribution
    */
   template<typename RandomNumberEngine>
-  std::vector<double> triangular(RandomNumberEngine* e, size_t n, double low, double high, double mode){
+  std::vector<double> triangular(RandomNumberEngine& e, size_t n, double low, double high, double mode){
     std::vector<double> ret(n);
     double f = (mode-low)/(high-low);
     double lowshift = (high-low)*(mode-low);
@@ -98,7 +98,7 @@ namespace reshaper {
    * \see https://en.wikipedia.org/wiki/Exponential_distribution
    */
   template<typename RandomNumberEngine>
-  std::vector<double> exponential(RandomNumberEngine* e, size_t n, double lambda){
+  std::vector<double> exponential(RandomNumberEngine& e, size_t n, double lambda){
     std::vector<double> ret(n);
     for (auto it = ret.begin(); it != ret.end(); ++it)
       *it = -log(uniform(e))/lambda;
@@ -118,7 +118,7 @@ namespace reshaper {
    * \see https://en.wikipedia.org/wiki/Normal_distribution
    */
   template<typename RandomNumberEngine>
-  void gen_pair_of_gaussians(RandomNumberEngine* e, double& o, double& t, double mu, double sigma){
+  void gen_pair_of_gaussians(RandomNumberEngine& e, double& o, double& t, double mu, double sigma){
     double u,v,r;
     do{
       u = -1 + 2*uniform(e);
@@ -150,7 +150,7 @@ namespace reshaper {
    * \see https://en.wikipedia.org/wiki/Normal_distribution
    */
   template<typename RandomNumberEngine>
-  std::vector<double> gaussian(RandomNumberEngine* e, size_t n, double mu, double sigma){
+  std::vector<double> gaussian(RandomNumberEngine& e, size_t n, double mu, double sigma){
     std::vector<double> ret(n);
     size_t i = 0;
 
@@ -181,7 +181,7 @@ namespace reshaper {
    * \see https://en.wikipedia.org/wiki/Gamma_distribution
    */
   template<typename RandomNumberEngine>
-  std::vector<double> gamma(RandomNumberEngine* e, size_t n, double alpha, double beta){
+  std::vector<double> gamma(RandomNumberEngine& e, size_t n, double alpha, double beta){
     std::vector<double> ret(n);
     if (alpha >= 1.0){
       double d = alpha - 1.0/3;
@@ -226,7 +226,7 @@ namespace reshaper {
    * \see https://en.wikipedia.org/wiki/Beta_distribution
    */
   template<typename RandomNumberEngine>
-  std::vector<double> beta(RandomNumberEngine* e, size_t n, double alpha, double beta){
+  std::vector<double> beta(RandomNumberEngine& e, size_t n, double alpha, double beta){
     std::vector<double> ret = gamma(e, n, alpha, 1);
     std::vector<double> u = gamma(e, n, beta, 1);
     for (auto it = ret.begin(), uit = u.begin(); it != ret.end(); ++it, ++uit)
@@ -244,7 +244,7 @@ namespace reshaper {
    * \see https://en.wikipedia.org/wiki/Log-normal_distribution
    */
   template<typename RandomNumberEngine>
-  std::vector<double> lognormal(RandomNumberEngine* e, size_t n, double mu, double sigma){
+  std::vector<double> lognormal(RandomNumberEngine& e, size_t n, double mu, double sigma){
     std::vector<double> ret = gaussian(e, n, mu, sigma);
     for (auto it = ret.begin(); it != ret.end(); ++it)
       *it = exp(*it);
@@ -264,7 +264,7 @@ namespace reshaper {
    * \see http://sa-ijas.stat.unipd.it/sites/sa-ijas.stat.unipd.it/files/417-426.pdf
    */
   template<typename RandomNumberEngine>
-  std::vector<double> vonmises (RandomNumberEngine* e, size_t n, double mu, double kappa){
+  std::vector<double> vonmises (RandomNumberEngine& e, size_t n, double mu, double kappa){
     std::vector<double> ret(n);
     double s = kappa > 1.3 ? 1/sqrt(kappa) : M_PI*exp(-kappa);
     for (auto it = ret.begin(); it != ret.end(); ++it){
@@ -290,7 +290,7 @@ namespace reshaper {
    * \see https://en.wikipedia.org/wiki/Pareto_distribution
    */
   template<typename RandomNumberEngine>
-  std::vector<double> pareto(RandomNumberEngine* e, size_t n, double alpha, double xm){
+  std::vector<double> pareto(RandomNumberEngine& e, size_t n, double alpha, double xm){
     std::vector<double> ret(n);
     double alphainv = 1 / alpha;
     for (auto it = ret.begin(); it != ret.end(); ++it)
@@ -308,7 +308,7 @@ namespace reshaper {
    * \see https://en.wikipedia.org/wiki/Weibull_distribution
    */
   template<typename RandomNumberEngine>
-  std::vector<double> weibull(RandomNumberEngine* e, size_t n, double lambda, double k){
+  std::vector<double> weibull(RandomNumberEngine& e, size_t n, double lambda, double k){
     std::vector<double> ret(n);
     double kinv = 1 / k;
     for (auto it = ret.begin(); it != ret.end(); ++it)
@@ -323,11 +323,11 @@ namespace reshaper {
    * \return A uniform integer from the interval [0,\p ub).
    */
   template<typename RandomNumberEngine>
-  uint64_t uniform_uint(RandomNumberEngine* e, uint64_t ub){
+  uint64_t uniform_uint(RandomNumberEngine& e, uint64_t ub){
     uint_fast8_t bits = floor(log2(ub)) + 1;
     uint64_t ret;
     do {
-      ret = (*e)() >> (64 - bits);
+      ret = e() >> (64 - bits);
     } while (ret >= ub);
     return ret;
   }
@@ -344,7 +344,7 @@ namespace reshaper {
    * \return Uniformly distributed integers.
    */
   template<typename RandomNumberEngine>
-  std::vector<int64_t> uniform_int(RandomNumberEngine* e, size_t n, int64_t lb, int64_t step, int64_t width){
+  std::vector<int64_t> uniform_int(RandomNumberEngine& e, size_t n, int64_t lb, int64_t step, int64_t width){
     std::vector<int64_t> ret(n);
     for (auto it = ret.begin(); it != ret.end(); ++it)
       *it = lb + step*uniform_uint(e,width);
@@ -362,7 +362,7 @@ namespace reshaper {
    * \see http://www.keithschwarz.com/darts-dice-coins/
    */
   template<typename RandomNumberEngine>
-  std::vector<uint64_t> alias_sampling(RandomNumberEngine* e, size_t n, std::vector<double> weights){
+  std::vector<uint64_t> alias_sampling(RandomNumberEngine& e, size_t n, std::vector<double> weights){
     size_t len = weights.size();
     std::vector<double> prob_table(len);
     std::vector<size_t> alias_table(len);
@@ -417,7 +417,7 @@ namespace reshaper {
    * \return Sequence of integers drawn without replacement.
    */
   template<typename RandomNumberEngine>
-  std::vector<uint64_t> uniform_without_replacement(RandomNumberEngine* e, size_t ub, size_t n){
+  std::vector<uint64_t> uniform_without_replacement(RandomNumberEngine& e, size_t ub, size_t n){
     std::vector<uint64_t> ret(n);
     std::set<size_t> seen;
     auto it = ret.begin();
